@@ -84,6 +84,6 @@ export default class CounterButton extends Component {
 
 ##### Hands On
 
-> 1. Buat 2 (dua) buah button yang `incrementButton` dan `decrementButton` pada `CounterButton` component
+> 1. Buat 2 (dua) buah button `incrementButton` dan `decrementButton` pada `CounterButton` component
 > 2. Sesuai nama fungsi nya, ketika kita mengklik tombol `+` maka value counter akan bertambah `+1` dan jika mengklik tombol `-` maka value counter akan berkurang `-1`
-> Bagus jika diberikan validasi agar counter value tidak minus
+> 3. Bagus jika diberikan validasi agar counter value tidak minus
