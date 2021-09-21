@@ -1,5 +1,5 @@
 import { Container, Row } from "react-bootstrap";
-import BookComponent from "./components/BookComponent";
+import BookComponent from "./components/book/BookComponent";
 
 function App() {
 
