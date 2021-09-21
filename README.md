@@ -81,9 +81,55 @@ export default class CounterButton extends Component {
 }
 ```
 
-
 ##### Hands On
 
 > 1. Buat 2 (dua) buah button `incrementButton` dan `decrementButton` pada `CounterButton` component
 > 2. Sesuai nama fungsi nya, ketika kita mengklik tombol `+` maka value counter akan bertambah `+1` dan jika mengklik tombol `-` maka value counter akan berkurang `-1`
 > 3. Bagus jika diberikan validasi agar counter value tidak minus
+
+
+##### Passing Data From Child to Parent Component using Hooks
+
+> 1. Create a new directory `hooks` in `counter` directory
+> 2. Create file `CounterComponentHooks.js` and `CounterButtonHooks.js`
+
+Open `CounterComponentHooks.js` and then adding script this
+```js
+const CounterComponentHook = () => {
+
+  const [counter, setCounter] = useState(1);
+
+  const increment = () => {
+    setCounter(counter + 1)
+
+  }
+
+  const decrement = () => {
+    setCounter(counter - 1)
+  }
+
+  return (
+    <div>
+      <h3>{counter}</h3>
+      <CounterButtonHooks incrementButton={increment} decrementButton={decrement} />
+    </div>
+  )
+}
+
+export default CounterComponentHook;
+```
+
+Open `CounterButtonHooks.js` and adding script this
+```js
+const CounterButtonHooks = ({ incrementButton, decrementButton }) => {
+
+  return (
+    <div>
+      <button onClick={incrementButton} className="btn btn-warning">+</button>
+      <button onClick={decrementButton} className="btn btn-danger">-</button>
+    </div>
+  )
+}
+
+export default CounterButtonHooks;
+```
