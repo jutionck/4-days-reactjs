@@ -1,11 +1,12 @@
 import { Container, Row } from "react-bootstrap";
-import BookList from "./components/book/BookList";
+import CounterComponent from "./components/counter/CounterComponent";
 
 function App() {
   return (
     <Container>
       <Row>
-        <BookList />
+        {/* <BookList /> */}
+        <CounterComponent />
       </Row>
     </Container>
   );
