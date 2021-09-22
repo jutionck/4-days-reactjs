@@ -7,6 +7,7 @@ const BookList = ({ match }) => {
 
   const { path } = match
 
+  // eslint-disable-next-line no-unused-vars
   const [getBooks, setBooks] = useState([
     {
       id: 1,

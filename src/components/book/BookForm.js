@@ -1,26 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { bookSchema } from '../../validations/validationSchema';
 
-const BookForm = (props) => {
+const BookForm = () => {
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [image, setImage] = useState('');
+  const { register, handleSubmit, reset, setValue, formState: { errors, isSubmitting } } = useForm({
+    resolver: yupResolver(bookSchema)
+  });
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    const newBook = {
-      id: Math.floor(Math.random() * 100) + 1,
-      title: title,
-      description: description,
-      image: image
-    }
-    props.onCreateBook(newBook);
-    setTitle('')
-    setDescription('')
-    setImage('')
+  const submitForm = (data) => {
+    console.log(data);
   }
 
   return (
@@ -28,16 +20,18 @@ const BookForm = (props) => {
       <Row className="mt-5">
         <Col lg={8}>
           <h3>BookForm components</h3>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit(submitForm)}>
             <Form.Group className="mb-3" controlId="formBasicTitle">
               <Form.Label>Title</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter book title"
                 name="title"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
+                {...register("title")} className={`form-control ${errors.title ? 'is-invalid' : ''}`}
               />
+              <div className="invalid-feedback">
+                {errors.title?.message}
+              </div>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicDescription">
@@ -46,9 +40,11 @@ const BookForm = (props) => {
                 type="text"
                 placeholder="Enter description book"
                 name="description"
-                value={description}
-                onChange={e => setDescription(e.target.value)}
+                {...register("title")} className={`form-control ${errors.title ? 'is-invalid' : ''}`}
               />
+              <div className="invalid-feedback">
+                {errors.description?.message}
+              </div>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicImage">
@@ -57,15 +53,15 @@ const BookForm = (props) => {
                 type="text"
                 placeholder="Enter image url"
                 name="image"
-                value={image}
-                onChange={e => setImage(e.target.value)}
+                {...register("title")} className={`form-control ${errors.title ? 'is-invalid' : ''}`}
               />
+              <div className="invalid-feedback">
+                {errors.image?.message}
+              </div>
             </Form.Group>
             <Button
               variant="success"
               type="submit"
-              // eslint-disable-next-line no-sequences
-              disabled={!title, !description, !image}
             >
               Save
             </Button>
