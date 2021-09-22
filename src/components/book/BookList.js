@@ -1,21 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { getListBook } from "../../api/bookService";
 import BookComponent from "./BookComponent";
 
 const BookList = ({ match }) => {
 
-  const { path } = match
+  const { path } = match;
+  const [books, setBooks] = useState([]);
 
-  // eslint-disable-next-line no-unused-vars
-  const [getBooks, setBooks] = useState([
-    {
-      id: 1,
-      title: 'Asesmen Pembelajaran Berbasis Komputer Dan Android',
-      description: 'Implementasi Teknologi Informasi dan Komunikasi (TIK) pada lembaga pendidikan saat ini sudah menjadi keharusan, karena penerapan TIK dapat menjadi salah satu indikator keberhasilan suatu institusi pendidikan. Tidak sedikit dosen yang memanfaatkan kemajuan teknologi tersebut.',
-      image: 'https://cdn.gramedia.com/uploads/items/Asesmen_Pembelajaran_Berbasis_Komputer_dan_Android.jpg'
-    }
-  ]);
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = () => {
+    getListBook()
+      .then((response) => {
+        console.log(response.data.data);
+        setBooks(response.data.data)
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
 
   return (
     <Container>
@@ -23,18 +30,18 @@ const BookList = ({ match }) => {
       <Link to={`${path}/add`} className="btn btn-sm btn-success mb-3 text-uppercase">Add Book</Link>
       <Row>
         {
-          getBooks.map((book) => (
+          books && books.map((book) => (
             <BookComponent
               key={book.id}
               bookId={book.id}
               title={book.title}
               description={book.description}
-              image={book.image}
+              price={book.price}
               variant="primary" />
           ))
         }
         {
-          getBooks && !getBooks.length && <h4>No Book Display</h4>
+          books && !books.length && <h4>No Book Display</h4>
         }
       </Row>
     </Container>
