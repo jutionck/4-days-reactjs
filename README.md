@@ -9,6 +9,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 > 1. Create file `Book.js`
 > 2. Creat file `BookForm.js`
 
+
+#### PART Reactive Form
+
 Open `App.js` and the change like this
 ```js
 const App = () => {
@@ -101,4 +104,11 @@ const BookForm = (props) => {
 }
 
 export default BookForm;
+```
+
+#### PART Two Way Data Binding
+
+Open `BookForm.js` and then modify like this
+```js
+
 ```
