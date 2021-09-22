@@ -8,6 +8,7 @@ const BookList = ({ dataBooks }) => {
         dataBooks.map((book) => (
           <BookComponent
             key={book.id}
+            bookId={book.id}
             title={book.title}
             description={book.description}
             image={book.image}

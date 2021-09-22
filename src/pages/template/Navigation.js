@@ -27,7 +27,7 @@ const Navigation = () => {
             </Nav.Link>
           </Nav>
           <Nav>
-            <Nav.Link href="#deets">Login</Nav.Link>
+            <Nav.Link>Login</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Books from "./components/book/Books";
 import Members from "./components/member/Members";
 import Home from "./pages/Home";
+import BookDetail from "./components/book/BookDetail";
 
 
 const App = () => {
@@ -10,9 +11,10 @@ const App = () => {
     <Router>
       <Navigation />
       <Switch>
-        <Route exact path="/" component={Home} />
-        <Route path="/books" component={Books} />
-        <Route path="/member" component={Members} />
+        <Route path="/" exact component={Home} />
+        <Route path="/books" exact component={Books} />
+        <Route path="/books/:id" component={BookDetail} />
+        <Route path="/members" component={Members} />
       </Switch>
     </Router>
   );

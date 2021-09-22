@@ -87,7 +87,7 @@ export default App;
 
 > Silahkan coba akses path url misalnya : `localhost:3000/books` atau `localhost:3000/members`
 >
-> Bisa di lihat path `/` yang harusnya hanya untuk `Home` tetap terpanggil
+> Bisa di lihat path `/` yang harusnya hanya untuk `Home` tetap terpanggil karena di react semua yang ada/mengandung `/` akan tetep di load
 >
 > Solusinya adalah dengan menambahkan `Switch` dan pada path `/` menjadi `exact path="/"`
 
@@ -102,6 +102,14 @@ Open `App.js` and then modify
   </Switch>
 </Router>
 ```
+
+> Maksud dari `exact` ini adalah agar lebih spesifik, contoh di atas `exact` kita taruh di path `/`
+>
+> Maka ketika kita mengakses path `/books` component `Home` tidak akan ikut
+>
+> Lalu apa itu `Switch`, ini digunakan ketika path kita memiliki sebuah `parameter` misalnya `/books/:id` atau `/books?id=1` dia akan lebih spesifik memilih path yang tepat
+>
+> Contoh akan kita terapkan di part selanjutnya
 
 Open `Navigation.js` and the modify
 ```js
@@ -138,4 +146,70 @@ const Navigation = () => {
   )
 }
 export default Navigation;
+```
+
+##### Part Path Params
+
+Open `BookList.js` and then adding script this in `return`
+```js
+key={book.id}
+bookId={book.id}
+```
+
+Open `BookComponent.js` and then modify script `Button` to
+```js
+<Link to={`/books/${bookId}`} className="btn btn-primary">Detail</Link>
+```
+
+Now, create file `BookDetail.js` in `book` component and then add script like this
+```js
+const BookDetail = () => {
+  return (
+    <Container>
+      <Row>
+        <Col className="mt-5">
+          <h3>Book Detail Page</h3>
+        </Col>
+      </Row>
+    </Container>
+  )
+}
+
+export default BookDetail;
+```
+
+Open again `App.js` and modify
+```js
+<Router>
+  <Navigation />
+  <Switch>
+    <Route path="/" exact component={Home} />
+    <Route path="/books" exact component={Books} />
+    <Route path="/books/:id" component={BookDetail} />
+    <Route path="/members" component={Members} />
+  </Switch>
+</Router>
+```
+
+> Apapun itu jika path patternnya ada yang sama maka gunakan `exact`
+
+Now, how to get param from path ? in react we can use `match` put it like `props`
+
+Open `BookDetail.js` and then modify
+```js
+const BookDetail = ({ match }) => {
+
+  console.log(match);
+  return (
+    <Container>
+      <Row>
+        <Col className="mt-5">
+          <h3>Book Detail Page By Id {match.params.id}</h3>
+        </Col>
+      </Row>
+    </Container>
+  )
+}
+
+export default BookDetail;
 ```

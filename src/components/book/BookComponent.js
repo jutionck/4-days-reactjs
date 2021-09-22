@@ -1,8 +1,9 @@
 import React from 'react'
-import { Card, Button, Col } from 'react-bootstrap'
+import { Card, Col } from 'react-bootstrap'
+import { Link } from 'react-router-dom';
 import './BookComponent.css'
 
-const BookComponent = ({ title, description, image, variant }) => {
+const BookComponent = ({ bookId, title, description, image, variant }) => {
   return (
     <Col lg={3} md={6}>
       <Card className="book-card mt-5 mb-3">
@@ -12,7 +13,7 @@ const BookComponent = ({ title, description, image, variant }) => {
           <Card.Text>
             {description}
           </Card.Text>
-          <Button variant={variant}>Detail</Button>
+          <Link to={`/books/${bookId}`} className="btn btn-primary">Detail</Link>
         </Card.Body>
       </Card>
     </Col>
