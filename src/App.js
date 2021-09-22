@@ -1,8 +1,8 @@
-import Book from "./components/book/Book";
+import Books from "./components/book/Books";
 
 const App = () => {
   return (
-    <Book />
+    <Books />
   );
 }
 

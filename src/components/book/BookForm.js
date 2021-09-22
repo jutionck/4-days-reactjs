@@ -1,40 +1,73 @@
 import React, { useState } from 'react'
-import { Col, Form } from 'react-bootstrap'
+import { Form, Button } from 'react-bootstrap';
 
 const BookForm = (props) => {
 
-  const [getInputBook, setInputBook] = useState('')
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [image, setImage] = useState('');
 
   const handleSubmit = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     const newBook = {
       id: Math.floor(Math.random() * 100) + 1,
-      title: getInputBook,
-      description: getInputBook,
-      image: 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22286%22%20height%3D%22180%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20286%20180%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_17c0bd04600%20text%20%7B%20fill%3A%23999%3Bfont-weight%3Anormal%3Bfont-family%3Avar(--bs-font-sans-serif)%2C%20monospace%3Bfont-size%3A14pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_17c0bd04600%22%3E%3Crect%20width%3D%22286%22%20height%3D%22180%22%20fill%3D%22%23373940%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22106.140625%22%20y%3D%2296.6%22%3E286x180%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E'
+      title: title,
+      description: description,
+      image: image
     }
-    console.log(newBook);
     props.onCreateBook(newBook);
-
-  }
-
-  const handleInputBook = (event, field) => {
-    let { fields } = ''
-    fields[field] = event.target.value
-    console.log(getInputBook);
-    setInputBook({ fields });
+    setTitle('')
+    setDescription('')
+    setImage('')
   }
 
   return (
-    <Col lg={3} md={6} className="mt-5">
-      <h4>Form Book</h4>
+    <div className="mt-5">
+      <h3>BookForm components</h3>
       <Form onSubmit={handleSubmit}>
-        <input type="text" className="form-control" name="title" onChange={(event) => handleInputBook(event, 'title')} />
-        <input type="text" className="form-control" name="description" onChange={handleInputBook} />
-        <button className="btn btn-success" type="submit">Save</button>
+        <Form.Group className="mb-3" controlId="formBasicTitle">
+          <Form.Label>Title</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter book title"
+            name="title"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicDescription">
+          <Form.Label>Description</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter description book"
+            name="description"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicImage">
+          <Form.Label>Image</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter image url"
+            name="image"
+            value={image}
+            onChange={e => setImage(e.target.value)}
+          />
+        </Form.Group>
+        <Button
+          variant="success"
+          type="submit"
+          // eslint-disable-next-line no-sequences
+          disabled={!title, !description, !image}
+        >
+          Save
+        </Button>
       </Form>
-    </Col>
+    </div>
   )
 }
 
