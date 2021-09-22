@@ -4,6 +4,7 @@ import Books from "./components/book/Books";
 import Members from "./components/member/Members";
 import Home from "./pages/Home";
 import BookDetail from "./components/book/BookDetail";
+import BookForm from "./components/book/BookForm";
 
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/books" exact component={Books} />
+        <Route path="/books/add" exact component={BookForm} />
         <Route path="/books/:id" component={BookDetail} />
         <Route path="/members" component={Members} />
       </Switch>

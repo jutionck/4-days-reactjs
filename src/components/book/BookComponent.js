@@ -6,7 +6,7 @@ import './BookComponent.css'
 const BookComponent = ({ bookId, title, description, image, variant }) => {
   return (
     <Col lg={3} md={6}>
-      <Card className="book-card mt-5 mb-3">
+      <Card className="book-card mb-3">
         <Card.Img variant="top" className="book-img" src={image} />
         <Card.Body className="book-body">
           <Card.Title>{title}</Card.Title>
