@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Container, Row } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { getListBook } from "../../api/bookService";
+import { deleteBook, getListBook } from "../../api/bookService";
 import BookComponent from "./BookComponent";
 
 const BookList = ({ match }) => {
@@ -16,17 +16,26 @@ const BookList = ({ match }) => {
   const loadData = () => {
     getListBook()
       .then((response) => {
-        console.log(response.data.data);
-        setBooks(response.data.data)
+        console.log(response.data);
+        setBooks(response.data)
       })
       .catch((e) => {
         console.log(e);
       });
   }
 
+  const bookDelete = id => {
+    console.log("called", id)
+    deleteBook(id)
+      .then((res) => {
+        console.log('res', res)
+        loadData()
+      })
+  };
+
   return (
-    <Container>
-      <h3 className="mt-5">Book Page</h3>
+    <>
+      <h3>Book Page</h3>
       <Link to={`${path}/add`} className="btn btn-sm btn-success mb-3 text-uppercase">Add Book</Link>
       <Row>
         {
@@ -37,6 +46,8 @@ const BookList = ({ match }) => {
               title={book.title}
               description={book.description}
               price={book.price}
+              purchaseAmount={book.purchaseAmount}
+              onDeleteBook={bookDelete}
               variant="primary" />
           ))
         }
@@ -44,7 +55,7 @@ const BookList = ({ match }) => {
           books && !books.length && <h4>No Book Display</h4>
         }
       </Row>
-    </Container>
+    </>
   );
 }
 

@@ -1,6 +1,6 @@
 import http from "./httpCommon";
 
-const baseUrl = '/books';
+const baseUrl = '/book';
 
 const getListBook = () => {
   return http.get(`${baseUrl}`)
@@ -15,8 +15,8 @@ const getBookById = id => {
   return http.get(`${baseUrl}/${id}`)
 }
 
-const updateBook = (params) => {
-  return http.put(`${baseUrl}`, params)
+const updateBook = (id, params) => {
+  return http.put(`${baseUrl}/${id}`, params)
 }
 
 const deleteBook = id => {

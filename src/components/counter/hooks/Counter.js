@@ -19,7 +19,7 @@ const Counter = () => {
   }
 
   return (
-    <Col className="mt-5">
+    <Col>
       <h1>{count}</h1>
       <button onClick={increment} className="btn btn-outline-info mt-3">+</button>
       <button onClick={decrement} className="btn btn-outline-danger mt-3 mx-1">-</button>

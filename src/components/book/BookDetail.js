@@ -23,7 +23,7 @@ const BookDetail = ({ match }) => {
   return (
     <Container>
       <Row>
-        <Col className="mt-5">
+        <Col>
           <h3>Book Detail </h3>
           <div className="card shadow h-100 py-2">
             <div className="card-body">

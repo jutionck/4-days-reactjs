@@ -35,7 +35,7 @@ Open `bookService.js` and then modify
 ```js
 import http from "./httpCommon";
 
-const baseUrl = '/books';
+const baseUrl = '/book';
 
 const getListBook = () => {
   return http.get(`${baseUrl}`)
@@ -50,8 +50,8 @@ const getBookById = id => {
   return http.get(`${baseUrl}/${id}`)
 }
 
-const updateBook = (params) => {
-  return http.put(`${baseUrl}`, params)
+const updateBook = (id, params) => {
+  return http.put(`${baseUrl}/${id}`, params)
 }
 
 const deleteBook = id => {
@@ -76,7 +76,7 @@ export const bookSchema = yup.object().shape({
   year: yup.number()
     .required('Year is required')
     .min(4, 'year must be at max 4 characters'),
-  page: yup.number()
+  pages: yup.number()
     .required('Pages is required')
     .min(1, 'pages must be at min 0 pages'),
   language: yup.string()
@@ -94,17 +94,11 @@ export const bookSchema = yup.object().shape({
 
 Open `App.js` and modify
 ```js
-<Router>
-  <Navigation />
-  <Switch>
-    <Route path="/" exact component={Home} />
-    <Route path="/books" exact component={Books} />
-    <Route path="/books/add" exact component={BookForm} />
-    <Route path="/books/edit/:id" exact component={BookForm} />
-    <Route path="/books/:id" component={BookDetail} />
-    <Route path="/members" component={Members} />
-  </Switch>
-</Router>
+const App = () => {
+  return (
+    <Routing />
+  );
+}
 ```
 
 Open `BookList.js` and modify
@@ -121,17 +115,26 @@ const BookList = ({ match }) => {
   const loadData = () => {
     getListBook()
       .then((response) => {
-        console.log(response.data.data);
-        setBooks(response.data.data)
+        console.log(response.data);
+        setBooks(response.data)
       })
       .catch((e) => {
         console.log(e);
       });
   }
 
+  const bookDelete = id => {
+    console.log("called", id)
+    deleteBook(id)
+      .then((res) => {
+        console.log('res', res)
+        loadData()
+      })
+  };
+
   return (
-    <Container>
-      <h3 className="mt-5">Book Page</h3>
+    <>
+      <h3>Book Page</h3>
       <Link to={`${path}/add`} className="btn btn-sm btn-success mb-3 text-uppercase">Add Book</Link>
       <Row>
         {
@@ -142,6 +145,8 @@ const BookList = ({ match }) => {
               title={book.title}
               description={book.description}
               price={book.price}
+              purchaseAmount={book.purchaseAmount}
+              onDeleteBook={bookDelete}
               variant="primary" />
           ))
         }
@@ -149,14 +154,16 @@ const BookList = ({ match }) => {
           books && !books.length && <h4>No Book Display</h4>
         }
       </Row>
-    </Container>
+    </>
   );
 }
+
+export default BookList;
 ```
 
 Open `BookComponent.js` and modify
 ```js
-const BookComponent = ({ bookId, title, description, price }) => {
+const BookComponent = ({ bookId, title, description, price, purchaseAmount, onDeleteBook }) => {
   return (
     <Col lg={4} md={6}>
       <Card className="book-card mb-3">
@@ -168,8 +175,15 @@ const BookComponent = ({ bookId, title, description, price }) => {
           </Card.Text>
           <div className="d-flex justify-content-between align-items-center">
             <div className="btn-group">
-              <Link to={`/books/${bookId}`} className="btn btn-sm btn-outline-secondary">Detail</Link>
-              <Link to={`/books/edit/${bookId}`} className="btn btn-sm btn-outline-secondary">Update</Link>
+              <Link to={`/books/${bookId}`} className="btn btn-sm btn-outline-info">Detail</Link>
+              <Link to={`/books/edit/${bookId}`} className="btn btn-sm btn-outline-success">Update</Link>
+
+              {purchaseAmount > 0 ? <button onClick={() => onDeleteBook(bookId)} className="btn btn-sm btn-outline-danger" disabled={true}>
+                <span>Delete</span>
+              </button> :
+                <button onClick={() => onDeleteBook(bookId)} className="btn btn-sm btn-outline-danger" >
+                  <span>Delete</span>
+                </button>}
             </div>
             <small className="text-muted">Rp. {price}</small>
           </div>
@@ -178,6 +192,8 @@ const BookComponent = ({ bookId, title, description, price }) => {
     </Col>
   );
 }
+
+export default BookComponent;
 ```
 
 Open `BookDetail.js` and modify
@@ -203,7 +219,7 @@ const BookDetail = ({ match }) => {
   return (
     <Container>
       <Row>
-        <Col className="mt-5">
+        <Col>
           <h3>Book Detail </h3>
           <div className="card shadow h-100 py-2">
             <div className="card-body">
@@ -313,7 +329,7 @@ const BookForm = ({ history, match }) => {
 
   const submitForm = (data) => {
     console.log('data', data)
-    return isAddMode ? insert(data) : update(data)
+    return isAddMode ? insert(data) : update(id, data)
   }
 
   const insert = (data) => {
@@ -325,8 +341,8 @@ const BookForm = ({ history, match }) => {
       })
   }
 
-  const update = (data) => {
-    return updateBook(data)
+  const update = (id, data) => {
+    return updateBook(id, data)
       .then((res) => {
         console.log('Book updated')
         history.push('..');
@@ -338,7 +354,7 @@ const BookForm = ({ history, match }) => {
       // get user and set form fields
       getBookById(id).then(res => {
         let book = res.data
-        const fields = ['id', 'title', 'description', 'year', 'page', 'language',
+        const fields = ['title', 'description', 'year', 'pages', 'language',
           'publisher', 'price', 'stock'];
         fields.forEach(field => setValue(field, book[field]));
         setBook(book);
@@ -348,129 +364,127 @@ const BookForm = ({ history, match }) => {
 
 
   return (
-    <Container>
-      <Form onSubmit={handleSubmit(submitForm)} onReset={reset}>
-        <h3 className="mt-5">{isAddMode ? 'Add Book' : 'Edit Book'}</h3>
-        <div style={{ textAlign: "left" }} className="mb-5">
-          <Form.Group as={Row} className="mb-3" controlId="formBasicTitle">
-            <Form.Control
-              type="hidden"
-              placeholder="Enter title"
-              name="id"
-              {...register("id")}
-            />
-            <Form.Label column sm="2">Title</Form.Label>
-            <Col sm="10">
-              <Form.Control
-                type="text"
-                placeholder="Enter title"
-                name="title"
-                {...register("title")} className={`form-control ${errors.title ? 'is-invalid' : ''}`}
-              // onChange={handleInputChange}
-              />
-              <div className="invalid-feedback">{errors.title?.message}</div>
-            </Col>
+    <Row>
+      <Col>
+        <Form onSubmit={handleSubmit(submitForm)} onReset={reset}>
+          <h3>{isAddMode ? 'Add Book' : 'Edit Book'}</h3>
+          <div style={{ textAlign: "left" }} className="mb-5">
+            <Form.Group as={Row} className="mb-3" controlId="formBasicTitle">
+              <Form.Label column sm="2">Title</Form.Label>
+              <Col sm="10">
+                <Form.Control
+                  type="text"
+                  placeholder="Enter title"
+                  name="title"
+                  {...register("title")} className={`form-control ${errors.title ? 'is-invalid' : ''}`}
+                // onChange={handleInputChange}
+                />
+                <div className="invalid-feedback">{errors.title?.message}</div>
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formBasicDescription">
+              <Form.Label column sm="2">Description</Form.Label>
+              <Col sm="10">
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="description"
+                  {...register("description")} className={`form-control ${errors.description ? 'is-invalid' : ''}`}
+                />
+                <div className="invalid-feedback">{errors.description?.message}</div>
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formBasicYear">
+              <Form.Label column sm="2">Year</Form.Label>
+              <Col sm="10">
+                <Form.Control
+                  type="number"
+                  placeholder="Enter Year"
+                  name="year"
+                  {...register("year")} className={`form-control ${errors.year ? 'is-invalid' : ''}`}
+                />
+                <div className="invalid-feedback">{errors.year?.message}</div>
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formBasicPages">
+              <Form.Label column sm="2">Pages</Form.Label>
+              <Col sm="3">
+                <Form.Control
+                  type="number"
+                  placeholder="Enter Pages"
+                  name="page"
+                  {...register("pages")} className={`form-control ${errors.pages ? 'is-invalid' : ''}`}
+                />
+                <div className="invalid-feedback">{errors.pages?.message}</div>
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formBasicLanguage">
+              <Form.Label column sm="2">Language</Form.Label>
+              <Col sm="3">
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Language"
+                  name="language"
+                  {...register("language")} className={`form-control ${errors.language ? 'is-invalid' : ''}`}
+                />
+                <div className="invalid-feedback">{errors.language?.message}</div>
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formBasicPublisher">
+              <Form.Label column sm="2">Publisher</Form.Label>
+              <Col sm="3">
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Publisher"
+                  name="publisher"
+                  {...register("publisher")} className={`form-control ${errors.publisher ? 'is-invalid' : ''}`}
+                />
+                <div className="invalid-feedback">{errors.publisher?.message}</div>
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formBasicPrice">
+              <Form.Label column sm="2">Price</Form.Label>
+              <Col sm="3">
+                <Form.Control
+                  type="number"
+                  placeholder="Rp-,"
+                  name="price"
+                  {...register("price")} className={`form-control ${errors.price ? 'is-invalid' : ''}`}
+                />
+                <div className="invalid-feedback">{errors.price?.message}</div>
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formBasicStock">
+              <Form.Label column sm="2">Stock</Form.Label>
+              <Col sm="3">
+                <Form.Control
+                  type="number"
+                  placeholder="0"
+                  name="stock"
+                  {...register("stock")} className={`form-control ${errors.stock ? 'is-invalid' : ''}`}
+                />
+                <div className="invalid-feedback">{errors.stock?.message}</div>
+              </Col>
+            </Form.Group>
+          </div>
+          <Form.Group>
+            <Button
+              variant="primary"
+              type="submit"
+              className="btn btn-success"
+            >
+              {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+              Save
+            </Button>
+            <Link to={isAddMode ? '.' : '..'} className="btn btn-warning mx-2">Cancel</Link>
           </Form.Group>
-          <Form.Group as={Row} className="mb-3" controlId="formBasicDescription">
-            <Form.Label column sm="2">Description</Form.Label>
-            <Col sm="10">
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="description"
-                {...register("description")} className={`form-control ${errors.description ? 'is-invalid' : ''}`}
-              />
-              <div className="invalid-feedback">{errors.description?.message}</div>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="mb-3" controlId="formBasicYear">
-            <Form.Label column sm="2">Year</Form.Label>
-            <Col sm="10">
-              <Form.Control
-                type="number"
-                placeholder="Enter Year"
-                name="year"
-                {...register("year")} className={`form-control ${errors.year ? 'is-invalid' : ''}`}
-              />
-              <div className="invalid-feedback">{errors.year?.message}</div>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="mb-3" controlId="formBasicPages">
-            <Form.Label column sm="2">Pages</Form.Label>
-            <Col sm="3">
-              <Form.Control
-                type="number"
-                placeholder="Enter Pages"
-                name="page"
-                {...register("page")} className={`form-control ${errors.page ? 'is-invalid' : ''}`}
-              />
-              <div className="invalid-feedback">{errors.page?.message}</div>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="mb-3" controlId="formBasicLanguage">
-            <Form.Label column sm="2">Language</Form.Label>
-            <Col sm="3">
-              <Form.Control
-                type="text"
-                placeholder="Enter Language"
-                name="language"
-                {...register("language")} className={`form-control ${errors.language ? 'is-invalid' : ''}`}
-              />
-              <div className="invalid-feedback">{errors.language?.message}</div>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="mb-3" controlId="formBasicPublisher">
-            <Form.Label column sm="2">Publisher</Form.Label>
-            <Col sm="3">
-              <Form.Control
-                type="text"
-                placeholder="Enter Publisher"
-                name="publisher"
-                {...register("publisher")} className={`form-control ${errors.publisher ? 'is-invalid' : ''}`}
-              />
-              <div className="invalid-feedback">{errors.publisher?.message}</div>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="mb-3" controlId="formBasicPrice">
-            <Form.Label column sm="2">Price</Form.Label>
-            <Col sm="3">
-              <Form.Control
-                type="number"
-                placeholder="Rp-,"
-                name="price"
-                {...register("price")} className={`form-control ${errors.price ? 'is-invalid' : ''}`}
-              />
-              <div className="invalid-feedback">{errors.price?.message}</div>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="mb-3" controlId="formBasicStock">
-            <Form.Label column sm="2">Stock</Form.Label>
-            <Col sm="3">
-              <Form.Control
-                type="number"
-                placeholder="0"
-                name="stock"
-                {...register("stock")} className={`form-control ${errors.stock ? 'is-invalid' : ''}`}
-              />
-              <div className="invalid-feedback">{errors.stock?.message}</div>
-            </Col>
-          </Form.Group>
-        </div>
-        <Form.Group>
-          <Button
-            variant="primary"
-            type="submit"
-            className="btn btn-success"
-          >
-            {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
-            Save
-          </Button>
-          <Link to={isAddMode ? '.' : '..'} className="btn btn-warning mx-2">Cancel</Link>
-        </Form.Group>
-      </Form>
-    </Container>
+        </Form>
+      </Col>
+    </Row>
   )
 }
+
+export default BookForm;
 ```
 
 #### PART Hands On

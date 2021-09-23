@@ -10,7 +10,7 @@ export const bookSchema = yup.object().shape({
   year: yup.number()
     .required('Year is required')
     .min(4, 'year must be at max 4 characters'),
-  page: yup.number()
+  pages: yup.number()
     .required('Pages is required')
     .min(1, 'pages must be at min 0 pages'),
   language: yup.string()

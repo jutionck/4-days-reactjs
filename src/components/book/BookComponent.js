@@ -3,7 +3,7 @@ import { Card, Col } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
 import './BookComponent.css'
 
-const BookComponent = ({ bookId, title, description, price }) => {
+const BookComponent = ({ bookId, title, description, price, purchaseAmount, onDeleteBook }) => {
   return (
     <Col lg={4} md={6}>
       <Card className="book-card mb-3">
@@ -15,8 +15,15 @@ const BookComponent = ({ bookId, title, description, price }) => {
           </Card.Text>
           <div className="d-flex justify-content-between align-items-center">
             <div className="btn-group">
-              <Link to={`/books/${bookId}`} className="btn btn-sm btn-outline-secondary">Detail</Link>
-              <Link to={`/books/edit/${bookId}`} className="btn btn-sm btn-outline-secondary">Update</Link>
+              <Link to={`/books/${bookId}`} className="btn btn-sm btn-outline-info">Detail</Link>
+              <Link to={`/books/edit/${bookId}`} className="btn btn-sm btn-outline-success">Update</Link>
+
+              {purchaseAmount > 0 ? <button onClick={() => onDeleteBook(bookId)} className="btn btn-sm btn-outline-danger" disabled={true}>
+                <span>Delete</span>
+              </button> :
+                <button onClick={() => onDeleteBook(bookId)} className="btn btn-sm btn-outline-danger" >
+                  <span>Delete</span>
+                </button>}
             </div>
             <small className="text-muted">Rp. {price}</small>
           </div>
