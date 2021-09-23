@@ -101,6 +101,30 @@ const App = () => {
 }
 ```
 
+`Routing.js` adding script like this
+```js
+const Routing = () => {
+  return (
+    <Router>
+      <Navigation />
+      <section className="py-5 container mt-5">
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/books" exact component={Books} />
+          <Route path="/books/add" exact component={BookForm} />
+          <Route path="/books/edit/:id" exact component={BookForm} />
+          <Route path="/books/:id" component={BookDetail} />
+          <Route path="/members" component={Members} />
+        </Switch>
+      </section>
+      <Footer />
+    </Router>
+  )
+}
+
+export default Routing
+```
+
 Open `BookList.js` and modify
 ```js
 const BookList = ({ match }) => {
