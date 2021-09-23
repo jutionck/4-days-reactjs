@@ -1,18 +1,19 @@
 import React from 'react'
-import { Card, Button, Col } from 'react-bootstrap'
+import { Link } from 'react-router-dom';
+import { Card, Col } from 'react-bootstrap'
 import './BookComponent.css'
 
-const BookComponent = ({ title, description, image, variant }) => {
+const BookComponent = ({ bookId, title, description, image }) => {
   return (
     <Col lg={3} md={6}>
-      <Card className="book-card mt-5 mb-3">
+      <Card className="book-card mb-3">
         <Card.Img variant="top" className="book-img" src={image} />
         <Card.Body className="book-body">
           <Card.Title>{title}</Card.Title>
           <Card.Text>
             {description}
           </Card.Text>
-          <Button variant={variant}>Detail</Button>
+          <Link to={`/books/${bookId}`} className="btn btn-primary">Detail</Link>
         </Card.Body>
       </Card>
     </Col>

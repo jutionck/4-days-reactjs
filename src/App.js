@@ -1,8 +1,8 @@
-import Books from "./components/book/Books";
+import Routing from "./pages/Routing";
 
 const App = () => {
   return (
-    <Books />
+    <Routing />
   );
 }
 
