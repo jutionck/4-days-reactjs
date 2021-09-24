@@ -511,6 +511,131 @@ const BookForm = ({ history, match }) => {
 export default BookForm;
 ```
 
+#### PART Confirm Delete
+
+> 1. Create directory `modal` in `component`
+> 2. Create new file `Popup.js` in `modal` directory
+
+Open `Popup.js`
+```js
+const Popup = (props) => {
+  console.log(props);
+  return (
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Book Delete Confirmation
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <h4>Are you sure to delete this ?</h4>
+      </Modal.Body>
+      <Modal.Footer>
+        <button onClick={props.handleDeleteTrue} className="btn btn-danger">
+          Confirm
+        </button>
+        <Button onClick={props.onHide} className="btn btn-secondary">Close</Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
+export default popup;
+```
+
+Open `BookList.js` and then adding script like this
+```js
+const [popup, setPopup] = useState({
+    show: false,
+    id: null
+  });
+
+const handleDelete = (id) => {
+    setPopup({
+      show: true,
+      id
+    });
+  }
+
+  const handleDeleteTrue = () => {
+    if (popup.show && popup.id) {
+      bookDelete(popup.id)
+      setPopup({
+        show: false,
+        id: null,
+      });
+    }
+  };
+  ....
+  <>
+      <h3>Book Page</h3>
+      <Link to={`${path}/add`} className="btn btn-sm btn-success mb-3 text-uppercase">Add Book </Link>
+      <Row>
+        {
+          books.map((book) => (
+            <BookComponent
+              key={book.id}
+              bookId={book.id}
+              title={book.title}
+              description={book.description}
+              purchaseAmount={book.purchaseAmount}
+              price={book.price}
+              image={tmpImage}
+              path={path}
+              handleDelete={handleDelete}
+            />
+          ))
+        }
+        {
+          books && !books.length && <h4>No Book Display</h4>
+        }
+      </Row>
+      {popup.show && (
+        <Popup
+          show={popup}
+          handleDeleteTrue={handleDeleteTrue}
+          onHide={() => setPopup(false)}
+        />
+      )}
+    </>
+```
+
+Open `BookComponent.js` and the modify like this
+```js
+const BookComponent = ({ bookId, title, description, price, purchaseAmount, image, path, handleDelete }) => {
+  return (
+    <Col lg={3} md={6}>
+      <Card className="book-card mb-3">
+        <Card.Img variant="top" className="book-img" src={image} />
+        <Card.Body className="book-body">
+          <Card.Title>{title}</Card.Title>
+          <Card.Text>
+            {description}
+          </Card.Text>
+          <div className="d-flex justify-content-between align-items-center">
+            <ButtonGroup aria-label="Basic example">
+              <Link to={`${path}/${bookId}`} className="btn btn-sm btn-outline-secondary">Detail</Link>
+              <Link to={`${path}/edit/${bookId}`} className="btn btn-sm btn-outline-warning">Update</Link>
+              {purchaseAmount > 0 || purchaseAmount == null ? <button onClick={() => handleDelete(bookId)} className="btn btn-sm btn-outline-danger" disabled={true}>
+                <span>Delete</span>
+              </button> :
+                <button onClick={() => handleDelete(bookId)} className="btn btn-sm btn-outline-danger" >
+                  <span>Delete</span>
+                </button>}
+            </ButtonGroup>
+            <small className="text-muted">Rp. {price}</small>
+          </div>
+        </Card.Body>
+      </Card>
+    </Col>
+  );
+}
+```
 #### PART Hands On
 
 > Buat hal yang sama seperti `book` untuk yang `member`

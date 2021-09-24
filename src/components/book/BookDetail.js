@@ -8,7 +8,7 @@ const BookDetail = ({ match }) => {
   const [book, setBooks] = useState([]);
   useEffect(() => {
     loadData();
-  }, []);
+  });
 
   const loadData = () => {
     getBookById(id)
