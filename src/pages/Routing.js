@@ -12,15 +12,15 @@ const Routing = () => {
   return (
     <BrowserRouter>
       <Navigation />
-      <Switch>
-        <section className="py-5 container mt-5">
+      <section className="py-5 container mt-5">
+        <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/books" exact component={BookList} />
           <Route path="/books/add" exact component={BookForm} />
           <Route path="/books/:id" exact component={BookDetail} />
           <Route path="/members" exact component={Members} />
-        </section>
-      </Switch>
+        </Switch>
+      </section>
       <Footer />
     </BrowserRouter>
   )
