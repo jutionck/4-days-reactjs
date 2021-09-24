@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import { Row } from "react-bootstrap";
+import { Row, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { deleteBook, getListBook } from "../../api/bookService";
 import BookComponent from "./BookComponent";
 import { tmpImage } from '../../api/BookApi'
-import Popup from "../modal/Popup";
+import ModalComponent from "../modal/ModalComponent";
 
 const BookList = ({ match }) => {
 
   const { path } = match;
   const [books, setBooks] = useState([]);
-  const [popup, setPopup] = useState({
+  const [modalShow, setModalShow] = useState({
     show: false,
     id: null
   });
@@ -28,30 +28,28 @@ const BookList = ({ match }) => {
   }
 
   const handleDelete = (id) => {
-    setPopup({
+    setModalShow({
       show: true,
       id
-    });
+    })
   }
 
-  const bookDelete = id => {
-    console.log("called", id)
-    deleteBook(id)
-      .then((res) => {
-        console.log('res', res)
-        loadData()
-      })
-  };
-
   const handleDeleteTrue = () => {
-    if (popup.show && popup.id) {
-      bookDelete(popup.id)
-      setPopup({
+    if (modalShow.show && modalShow.id) {
+      bookDelete(modalShow.id)
+      setModalShow({
         show: false,
-        id: null,
-      });
+        id: null
+      })
     }
-  };
+  }
+
+  const bookDelete = (id) => {
+    return deleteBook(id)
+      .then(response => {
+        loadData();
+      })
+  }
 
   return (
     <>
@@ -77,13 +75,15 @@ const BookList = ({ match }) => {
           books && !books.length && <h4>No Book Display</h4>
         }
       </Row>
-      {popup.show && (
-        <Popup
-          show={popup}
-          handleDeleteTrue={handleDeleteTrue}
-          onHide={() => setPopup(false)}
-        />
-      )}
+      {
+        modalShow.show && (
+          <ModalComponent
+            show={modalShow}
+            handleDeleteTrue={handleDeleteTrue}
+            onHide={() => setModalShow(false)}
+          />
+        )
+      }
     </>
   );
 }

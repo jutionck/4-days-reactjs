@@ -1,23 +1,67 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { bookSchema } from '../../validations/validationSchema';
+import { createBook, getBookById, updateBook } from '../../api/bookService';
 
-const BookForm = () => {
+const BookForm = ({ history, match }) => {
 
-  // object destructuring
+  const { id } = match.params;
+  const isAddMode = !id;
+  const [book, setBook] = useState({})
+
+
+
   const { register, handleSubmit, reset, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(bookSchema)
   });
 
-  const submitForm = (data) => console.log(data);
+  const submitForm = (data) => {
+    return isAddMode ? insert(data) : update(id, data);
+  }
+
+  const insert = (data) => {
+    return createBook(data)
+      .then(response => {
+        history.push('.') // /books/add
+      })
+  }
+
+  const update = (id, data) => {
+    return updateBook(id, data)
+      .then(response => {
+        history.push('..') // /books/edit/:id
+      })
+  }
+
+  useEffect(() => {
+    if (!isAddMode) {
+      getBookById(id)
+        .then((response) => {
+          let book = response.data;
+          const fields = [
+            'title',
+            'description',
+            'year',
+            'pages',
+            'language',
+            'publisher',
+            'price',
+            'purchaseAmount',
+            'stock'
+          ];
+          fields.forEach(field => setValue(field, book[field]));
+          setBook(book);
+        })
+    }
+  }, [])
 
   return (
     <Row>
       <Col>
-        <Form onSubmit={handleSubmit(submitForm)}>
+        <Form onSubmit={handleSubmit(submitForm)} onReset={reset}>
           <h3 className="mb-5">Book Form</h3>
           <div style={{ textAlign: "left" }} className="mb-5">
             <Form.Group as={Row} className="mb-3" controlId="formBasicTitle">
@@ -102,6 +146,18 @@ const BookForm = () => {
                   {...register("price")} className={`form-control ${errors.price ? 'is-invalid' : ''}`}
                 />
                 <div className="invalid-feedback">{errors.price?.message}</div>
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formBasicPrice">
+              <Form.Label column sm="2">Purchase Amount</Form.Label>
+              <Col sm="10">
+                <Form.Control
+                  type="number"
+                  placeholder="Rp-,"
+                  name="purchaseAmount"
+                  {...register("purchaseAmount")} className={`form-control ${errors.purchaseAmount ? 'is-invalid' : ''}`}
+                />
+                <div className="invalid-feedback">{errors.purchaseAmount?.message}</div>
               </Col>
             </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="formBasicStock">

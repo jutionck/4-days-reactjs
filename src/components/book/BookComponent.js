@@ -17,12 +17,22 @@ const BookComponent = ({ bookId, title, description, price, purchaseAmount, imag
             <ButtonGroup aria-label="Basic example">
               <Link to={`${path}/${bookId}`} className="btn btn-sm btn-outline-secondary">Detail</Link>
               <Link to={`${path}/edit/${bookId}`} className="btn btn-sm btn-outline-warning">Update</Link>
-              {purchaseAmount > 0 || purchaseAmount == null ? <button onClick={() => handleDelete(bookId)} className="btn btn-sm btn-outline-danger" disabled={true}>
-                <span>Delete</span>
-              </button> :
-                <button onClick={() => handleDelete(bookId)} className="btn btn-sm btn-outline-danger" >
-                  <span>Delete</span>
-                </button>}
+              {
+                purchaseAmount > 0 || purchaseAmount === null ?
+                  <button
+                    onClick={() => handleDelete(bookId)}
+                    className="btn btn-sm btn-outline-danger"
+                    disabled={true}
+                  >
+                    Delete
+                  </button> :
+                  <button
+                    onClick={() => handleDelete(bookId)}
+                    className="btn btn-sm btn-outline-danger"
+                  >
+                    Delete
+                  </button>
+              }
             </ButtonGroup>
             <small className="text-muted">Rp. {price}</small>
           </div>

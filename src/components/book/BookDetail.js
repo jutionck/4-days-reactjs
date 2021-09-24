@@ -11,7 +11,10 @@ const BookDetail = ({ match }) => {
 
   useEffect(() => {
     getBookById(id)
-      .then((response) => setBook(response.data))
+      .then((response) => {
+        setBook(response.data)
+        console.log(response.data);
+      })
   })
 
   return (

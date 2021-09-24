@@ -20,12 +20,17 @@ export const bookSchema = yup.object().shape({
   language:
     yup.string()
       .required('Language is required'),
-  publisher: yup.string()
-    .required('Publisher is required'),
+  publisher:
+    yup.string()
+      .required('Publisher is required'),
   price: yup.string()
     .required('Price is require')
     .min(0, 'price can not be 0'),
-  stock: yup.string()
-    .required('Stock is require')
-    .min(0, 'Stock can not be 0')
+  purchaseAmount:
+    yup.string()
+      .min(0, 'price can not be 0'),
+  stock:
+    yup.string()
+      .required('Stock is require')
+      .min(0, 'Stock can not be 0')
 })
