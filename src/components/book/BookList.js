@@ -3,15 +3,21 @@ import { Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { deleteBook, getListBook } from "../../api/bookService";
 import BookComponent from "./BookComponent";
+import { tmpImage } from '../../api/BookApi'
+import ModalComponent from "../modal/ModalComponent";
 
 const BookList = ({ match }) => {
 
   const { path } = match;
   const [books, setBooks] = useState([]);
+  const [modalShow, setModalShow] = useState({
+    show: false,
+    id: null
+  });
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [])
 
   const loadData = () => {
     getListBook()
@@ -19,42 +25,65 @@ const BookList = ({ match }) => {
         console.log(response.data);
         setBooks(response.data)
       })
-      .catch((e) => {
-        console.log(e);
-      });
   }
 
-  const bookDelete = id => {
-    console.log("called", id)
-    deleteBook(id)
-      .then((res) => {
-        console.log('res', res)
-        loadData()
+  const handleDelete = (id) => {
+    setModalShow({
+      show: true,
+      id
+    })
+  }
+
+  const handleDeleteTrue = () => {
+    if (modalShow.show && modalShow.id) {
+      bookDelete(modalShow.id)
+      setModalShow({
+        show: false,
+        id: null
       })
-  };
+    }
+  }
+
+  const bookDelete = (id) => {
+    return deleteBook(id)
+      .then(response => {
+        loadData();
+      })
+  }
 
   return (
     <>
       <h3>Book Page</h3>
-      <Link to={`${path}/add`} className="btn btn-sm btn-success mb-3 text-uppercase">Add Book</Link>
+      <Link to={`${path}/add`} className="btn btn-sm btn-success mb-3 text-uppercase">Add Book </Link>
       <Row>
         {
-          books && books.map((book) => (
+          books.map((book) => (
             <BookComponent
               key={book.id}
               bookId={book.id}
               title={book.title}
               description={book.description}
-              price={book.price}
               purchaseAmount={book.purchaseAmount}
-              onDeleteBook={bookDelete}
-              variant="primary" />
+              price={book.price}
+              image={tmpImage}
+              path={path}
+              handleDelete={handleDelete}
+            />
           ))
         }
         {
           books && !books.length && <h4>No Book Display</h4>
         }
       </Row>
+      {
+        modalShow.show && (
+          <ModalComponent
+            show={modalShow}
+            handleDeleteTrue={handleDeleteTrue}
+            onHide={() => setModalShow(false)}
+          />
+        )
+      }
     </>
   );
 }

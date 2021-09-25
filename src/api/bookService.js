@@ -1,27 +1,17 @@
-import http from "./httpCommon";
+import http from './httpCommon';
 
-const baseUrl = '/book';
+const baseURL = '/book';
 
-const getListBook = () => {
-  return http.get(`${baseUrl}`)
+const getListBook = () => http.get(`${baseURL}`); // one liner javascript
+
+const getBookById = (id) => {
+  return http.get(`${baseURL}/${id}`);
 }
 
-const createBook = params => {
-  console.log(params)
-  return http.post(`${baseUrl}`, params)
-}
+const createBook = (payload) => http.post(`${baseURL}`, payload);
 
-const getBookById = id => {
-  return http.get(`${baseUrl}/${id}`)
-}
+const updateBook = (id, payload) => http.put(`${baseURL}/${id}`, payload)
 
-const updateBook = (id, params) => {
-  return http.put(`${baseUrl}/${id}`, params)
-}
+const deleteBook = (id) => http.delete(`${baseURL}/${id}`)
 
-const deleteBook = id => {
-  console.log("service", id)
-  return http.delete(`${baseUrl}/${id}`)
-}
-
-export { getListBook, createBook, getBookById, updateBook, deleteBook };
+export { getListBook, getBookById, createBook, updateBook, deleteBook }

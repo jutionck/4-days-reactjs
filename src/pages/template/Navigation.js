@@ -1,37 +1,34 @@
 import React from 'react'
-import { Container, Nav, Navbar } from 'react-bootstrap';
+import { Navbar, Container, Nav } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
 const Navigation = () => {
 
   const navStyle = {
-    color: '#8c8f91',
+    color: 'white',
     textDecoration: 'none'
   }
 
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className="fixed-top">
       <Container>
-        <Navbar.Brand>Book-Shop</Navbar.Brand>
+        <Navbar.Brand>
+          <Link to="/" style={navStyle}>Book-Shop</Link>
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link>
-              <Link to="/" style={navStyle}>Home</Link>
+              <Link to="/books" style={navStyle}>Book</Link>
             </Nav.Link>
             <Nav.Link>
-              <Link to="/books" style={navStyle}>Books</Link>
+              <Link to="/members" style={navStyle}>Member</Link>
             </Nav.Link>
-            <Nav.Link>
-              <Link to="/members" style={navStyle}>Members</Link>
-            </Nav.Link>
-          </Nav>
-          <Nav>
-            <Nav.Link>Login</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
   )
 }
-export default Navigation;
+
+export default Navigation

@@ -12,51 +12,60 @@ const BookForm = ({ history, match }) => {
   const isAddMode = !id;
   const [book, setBook] = useState({})
 
-  const { register, handleSubmit, reset, setValue, formState: { errors, isSubmitting } } = useForm({
-    resolver: yupResolver(bookSchema)
-  });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: {
+      errors,
+    } } = useForm({
+      resolver: yupResolver(bookSchema)
+    });
 
-  const submitForm = (data) => {
-    console.log('data', data)
-    return isAddMode ? insert(data) : update(id, data)
-  }
+  const submitForm = (data) => isAddMode ? insert(data) : update(id, data);
 
   const insert = (data) => {
-    console.log(data)
     return createBook(data)
-      .then((res) => {
-        console.log('Book added', res)
-        history.push('.');
+      .then(response => {
+        history.push('.') // /books/add
       })
   }
 
   const update = (id, data) => {
     return updateBook(id, data)
-      .then((res) => {
-        console.log('Book updated')
-        history.push('..');
+      .then(response => {
+        history.push('..') // /books/edit/:id
       })
   }
 
   useEffect(() => {
     if (!isAddMode) {
-      // get user and set form fields
-      getBookById(id).then(res => {
-        let book = res.data
-        const fields = ['title', 'description', 'year', 'pages', 'language',
-          'publisher', 'price', 'stock'];
-        fields.forEach(field => setValue(field, book[field]));
-        setBook(book);
-      });
+      getBookById(id)
+        .then((response) => {
+          let book = response.data;
+          const fields = [
+            'title',
+            'description',
+            'year',
+            'pages',
+            'language',
+            'publisher',
+            'price',
+            'purchaseAmount',
+            'stock'
+          ];
+          fields.forEach(field => setValue(field, book[field]));
+          setBook(book);
+        })
     }
-  }, []);
-
+  }, [])
 
   return (
     <Row>
       <Col>
         <Form onSubmit={handleSubmit(submitForm)} onReset={reset}>
-          <h3>{isAddMode ? 'Add Book' : 'Edit Book'}</h3>
+          <h3 className="mb-5">Book Form</h3>
           <div style={{ textAlign: "left" }} className="mb-5">
             <Form.Group as={Row} className="mb-3" controlId="formBasicTitle">
               <Form.Label column sm="2">Title</Form.Label>
@@ -66,7 +75,6 @@ const BookForm = ({ history, match }) => {
                   placeholder="Enter title"
                   name="title"
                   {...register("title")} className={`form-control ${errors.title ? 'is-invalid' : ''}`}
-                // onChange={handleInputChange}
                 />
                 <div className="invalid-feedback">{errors.title?.message}</div>
               </Col>
@@ -97,11 +105,11 @@ const BookForm = ({ history, match }) => {
             </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="formBasicPages">
               <Form.Label column sm="2">Pages</Form.Label>
-              <Col sm="3">
+              <Col sm="10">
                 <Form.Control
                   type="number"
                   placeholder="Enter Pages"
-                  name="page"
+                  name="pages"
                   {...register("pages")} className={`form-control ${errors.pages ? 'is-invalid' : ''}`}
                 />
                 <div className="invalid-feedback">{errors.pages?.message}</div>
@@ -109,7 +117,7 @@ const BookForm = ({ history, match }) => {
             </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="formBasicLanguage">
               <Form.Label column sm="2">Language</Form.Label>
-              <Col sm="3">
+              <Col sm="10">
                 <Form.Control
                   type="text"
                   placeholder="Enter Language"
@@ -121,7 +129,7 @@ const BookForm = ({ history, match }) => {
             </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="formBasicPublisher">
               <Form.Label column sm="2">Publisher</Form.Label>
-              <Col sm="3">
+              <Col sm="10">
                 <Form.Control
                   type="text"
                   placeholder="Enter Publisher"
@@ -133,7 +141,7 @@ const BookForm = ({ history, match }) => {
             </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="formBasicPrice">
               <Form.Label column sm="2">Price</Form.Label>
-              <Col sm="3">
+              <Col sm="10">
                 <Form.Control
                   type="number"
                   placeholder="Rp-,"
@@ -143,9 +151,21 @@ const BookForm = ({ history, match }) => {
                 <div className="invalid-feedback">{errors.price?.message}</div>
               </Col>
             </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formBasicPrice">
+              <Form.Label column sm="2">Purchase Amount</Form.Label>
+              <Col sm="10">
+                <Form.Control
+                  type="number"
+                  placeholder="Rp-,"
+                  name="purchaseAmount"
+                  {...register("purchaseAmount")} className={`form-control ${errors.purchaseAmount ? 'is-invalid' : ''}`}
+                />
+                <div className="invalid-feedback">{errors.purchaseAmount?.message}</div>
+              </Col>
+            </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="formBasicStock">
               <Form.Label column sm="2">Stock</Form.Label>
-              <Col sm="3">
+              <Col sm="10">
                 <Form.Control
                   type="number"
                   placeholder="0"
@@ -162,10 +182,9 @@ const BookForm = ({ history, match }) => {
               type="submit"
               className="btn btn-success"
             >
-              {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
               Save
             </Button>
-            <Link to={isAddMode ? '.' : '..'} className="btn btn-warning mx-2">Cancel</Link>
+            <Link to="/books" className="btn btn-warning mx-2">Cancel</Link>
           </Form.Group>
         </Form>
       </Col>
