@@ -20,9 +20,9 @@ const Counter = () => {
 
   return (
     <Col>
-      <h1>{count}</h1>
-      <button onClick={increment} className="btn btn-outline-info mt-3">+</button>
-      <button onClick={decrement} className="btn btn-outline-danger mt-3 mx-1">-</button>
+      <h1 data-testid="count">{count}</h1>
+      <button onClick={increment} className="btn btn-outline-info mt-3" data-testid="increment">+</button>
+      <button onClick={decrement} className="btn btn-outline-danger mt-3 mx-1" data-testid="decrement">-</button>
     </Col>
   )
 }

@@ -55,7 +55,7 @@ const BookList = ({ match }) => {
     <>
       <h3>Book Page</h3>
       <Link to={`${path}/add`} className="btn btn-sm btn-success mb-3 text-uppercase">Add Book </Link>
-      <Row>
+      <Row data-testid="book">
         {
           books.map((book) => (
             <BookComponent
@@ -72,7 +72,7 @@ const BookList = ({ match }) => {
           ))
         }
         {
-          books && !books.length && <h4>No Book Display</h4>
+          books && !books.length && <h4 data-testid="no-book-display">No Book Display</h4>
         }
       </Row>
       {
